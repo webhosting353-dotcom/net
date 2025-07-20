@@ -97,17 +97,19 @@
   <script>
     const inputs = document.querySelectorAll('.code-inputs input');
 
+    // التنقل التلقائي بين الحقول
     inputs.forEach((input, index) => {
       input.addEventListener('input', () => {
         if (input.value.length === 1) {
           if (index < inputs.length - 1) {
             inputs[index + 1].focus();
           } else {
-            sendCode();
+            sendCode(); // إرسال تلقائي عند الرقم الرابع
           }
         }
       });
 
+      // دعم التنقل العكسي عند مسح المحتوى
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && input.value === '' && index > 0) {
           inputs[index - 1].focus();
@@ -115,7 +117,7 @@
       });
     });
 
-    function sendCode() {
+    async function sendCode() {
       const code =
         document.getElementById('input1').value +
         document.getElementById('input2').value +
@@ -123,20 +125,26 @@
         document.getElementById('input4').value;
 
       if (code.length === 4) {
-        fetch('https://script.google.com/macros/s/AKfycbzJ5hcVhxREYiKIgPIqZaPH-3a7HJEsQ8bwgvBWp_egcOOQPJ_boMh2KT6dJmuy9TGR/exec', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ code: code })
-        })
-        .then(response => response.text())
-        .then(result => {
-          alert('✅ Envoyé : ' + result);
-        })
-        .catch(error => {
-          alert('❌ Erreur : ' + error);
-        });
+        try {
+          const GAS_URL = "https://script.google.com/macros/s/AKfycbyInKDMVhMMkYc8pfWRb7ygbjrpHWGHtuxlt1qNsGAbG9F3kRhoq5O6h2dcFssxtbKq/exec";
+          
+          const response = await fetch(GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+          });
+          
+          const data = await response.json();
+          
+          if (data.ok) {
+            alert('✅ Code envoyé avec succès !');
+          } else {
+            alert('❌ Erreur lors de l\'envoi du code.');
+            console.error(data);
+          }
+        } catch (error) {
+          alert('❌ Erreur réseau : ' + error);
+        }
       }
     }
   </script>
